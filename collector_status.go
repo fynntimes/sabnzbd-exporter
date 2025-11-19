@@ -41,6 +41,10 @@ func (s *sabnzbdStatusCollector) Collect(ch chan<- prometheus.Metric) {
 			ch <- prometheus.MustNewConstMetric(statusServerSSL, prometheus.GaugeValue, float64(server.SSLEnabled), serverHost)
 			ch <- prometheus.MustNewConstMetric(statusServerPriority, prometheus.GaugeValue, float64(server.Priority), serverHost)
 			splitValUnit := strings.Split(server.BPS, " ")
+			if len(splitValUnit) != 2 {
+				ch <- prometheus.MustNewConstMetric(statusServerBPS, prometheus.GaugeValue, 0, serverHost)
+				continue
+			}
 			valStr, unit := splitValUnit[0], splitValUnit[1]
 			val, err := strconv.ParseFloat(valStr, 64)
 			if err != nil {
